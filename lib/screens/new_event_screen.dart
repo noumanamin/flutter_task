@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/model/band_list.dart';
 import 'package:flutter_app/screens/band_selection_screen.dart';
 import 'package:flutter_app/screens/new_event_screen.dart';
 import 'package:flutter_app/utils/app_colors.dart';
+import 'package:flutter_app/utils/contants.dart';
 import 'package:flutter_app/widgets/date_time_selection_widget.dart';
 import 'package:flutter_app/widgets/selected_band_widget.dart';
 import 'package:flutter_app/widgets/slow_starter_wdiget.dart';
@@ -377,22 +377,24 @@ class _NewEventScreenState extends State<NewEventScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => BandSelectionScreen(),
+                        builder: (_) => BandSelectionScreen(submit: (value) {
+                          setState(() {});
+                        }),
                       ),
                     );
                   },
                   child: DateTimeSelectionWidget(
-                    hide: true,
+                    hide: getList().isEmpty ? false : true,
                     prefixIcon: SvgPicture.asset(
                       "assets/icons/microphone_with_wire.svg",
-                      color: AppColors.darkPurple.withOpacity(0.35),
+                      color: AppColors.darkPurple.withOpacity(getOpacity()),
                       width: 24,
                       height: 24,
                     ),
                     title: Text(
-                      "Your selected bands",
+                      getList().isEmpty ? "Band" : "Your selected bands",
                       style: TextStyle(
-                          color: AppColors.darkPurple.withOpacity(0.35),
+                          color: AppColors.darkPurple.withOpacity(getOpacity()),
                           fontSize: 18,
                           fontWeight: FontWeight.bold),
                     ),
@@ -401,27 +403,32 @@ class _NewEventScreenState extends State<NewEventScreen> {
                 SizedBox(
                   height: 10,
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    for (int index = 0; index < 3; index++) SelectedBandWidget()
-                  ],
-                ),
-                SizedBox(
-                  height: 12,
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  alignment: Alignment.topRight,
-                  child: Text(
-                    "...View all",
-                    style: TextStyle(color: AppColors.dartGrayOne),
+                getList().isEmpty
+                    ? Container(
+                        width: 0,
+                        height: 0,
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          for (int index = 0; index < getLength(); index++)
+                            SelectedBandWidget(index: index)
+                        ],
+                      ),
+                if (getList().isNotEmpty)
+                  SizedBox(
+                    height: 12,
                   ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
+                if (getList().isNotEmpty && getList().length > 3)
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    alignment: Alignment.topRight,
+                    child: Text(
+                      "...View all",
+                      style: TextStyle(color: AppColors.dartGrayOne),
+                    ),
+                  ),
                 DateTimeSelectionWidget(
                   prefixIcon: SvgPicture.asset(
                     "assets/icons/ticket.svg",
@@ -429,6 +436,7 @@ class _NewEventScreenState extends State<NewEventScreen> {
                     width: 24,
                     height: 24,
                   ),
+                  hide: false,
                   title: Text(
                     "Ticket Url",
                     style:
@@ -514,5 +522,13 @@ class _NewEventScreenState extends State<NewEventScreen> {
 
       print(clockString);
     }
+  }
+
+  double getOpacity() {
+    return getList().isEmpty ? 1 : 0.35;
+  }
+
+  int getLength() {
+    return getList().length <= 3 ? getList().length : 3;
   }
 }

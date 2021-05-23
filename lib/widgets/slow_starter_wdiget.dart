@@ -9,7 +9,10 @@ class SlowStarterWidget extends StatefulWidget {
   final check;
   final ValueChanged<String> onClick;
 
-  SlowStarterWidget({this.title, this.check, Key key, this.onClick})
+  List<DateModel> dateModel;
+
+  SlowStarterWidget(
+      {this.title, this.check, Key key, this.onClick, this.dateModel})
       : super(key: key);
 
   @override
@@ -19,18 +22,9 @@ class SlowStarterWidget extends StatefulWidget {
 class _SlowStarterWidgetState extends State<SlowStarterWidget> {
   bool click = false;
 
-  List<DateModel> dateModel = [
-    DateModel(date: "20 Mar", day: "Sun", color: Colors.red),
-    DateModel(date: "21 Mar", day: "Mon", color: Colors.green),
-    DateModel(date: "22 Mar", day: "Tue", color: Colors.pink),
-    DateModel(date: "23 Mar", day: "Wed", color: Colors.amber),
-    DateModel(date: "24 Mar", day: "Thu", color: Colors.blue),
-    DateModel(date: "25 Mar", day: "Fri", color: Colors.brown),
-    DateModel(date: "26 Mar", day: "Sat", color: Colors.deepOrange),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    List<DateModel> dateModelLoc = widget.dateModel ?? [];
     return AnimatedContainer(
       duration: Duration(minutes: 0),
       decoration: BoxDecoration(
@@ -93,27 +87,44 @@ class _SlowStarterWidgetState extends State<SlowStarterWidget> {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: [
-                        for (int index = 0; index < dateModel.length; index++)
-                          Container(
-                            margin: EdgeInsets.only(left: index == 0 ? 0 : 10),
-                            padding: EdgeInsets.only(
-                                top: 4, left: 8, right: 8, bottom: 4),
-                            decoration: BoxDecoration(
-                                color: AppColors.dartGrayOne,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8))),
-                            child: Column(
-                              children: [
-                                Text(
-                                  dateModel[index].date,
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                Text(
-                                  dateModel[index].day,
-                                  style:
-                                      TextStyle(color: dateModel[index].color),
-                                )
-                              ],
+                        for (int index = 0;
+                            index < dateModelLoc.length;
+                            index++)
+                          GestureDetector(
+                            onTap: () {
+                              for (int indexI = 0;
+                                  indexI < dateModelLoc.length;
+                                  indexI++) {
+                                dateModelLoc[indexI].select = false;
+                              }
+                              setState(() {
+                                dateModelLoc[index].select = true;
+                              });
+                            },
+                            child: Container(
+                              margin:
+                                  EdgeInsets.only(left: index == 0 ? 0 : 10),
+                              padding: EdgeInsets.only(
+                                  top: 4, left: 8, right: 8, bottom: 4),
+                              decoration: BoxDecoration(
+                                  color: dateModelLoc[index].select ??false
+                                      ? Colors.black
+                                      : AppColors.dartGrayOne,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8))),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    dateModelLoc[index].date,
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  Text(
+                                    dateModelLoc[index].day,
+                                    style: TextStyle(
+                                        color: dateModelLoc[index].color),
+                                  )
+                                ],
+                              ),
                             ),
                           )
                       ],

@@ -1,9 +1,14 @@
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/utils/app_colors.dart';
+import 'package:flutter_app/utils/contants.dart';
 import 'package:flutter_svg/svg.dart';
 
 class SelectedBandWidget extends StatefulWidget {
+  final index;
+
+  SelectedBandWidget({Key key, this.index}) : super(key: key);
+
   @override
   _SelectedBandWidgetState createState() => _SelectedBandWidgetState();
 }
@@ -11,6 +16,7 @@ class SelectedBandWidget extends StatefulWidget {
 class _SelectedBandWidgetState extends State<SelectedBandWidget> {
   @override
   Widget build(BuildContext context) {
+    int index = widget.index ?? 0;
     return Column(
       children: [
         SizedBox(
@@ -29,12 +35,12 @@ class _SelectedBandWidgetState extends State<SelectedBandWidget> {
             ),
             Expanded(
               child: Text(
-                "Brooks & Dunn",
+                getList()[index].bandName,
                 style: TextStyle(color: AppColors.lightGray),
               ),
             ),
             Text(
-              "MON 14 AUG,2021...",
+              "${getDate(index)}...",
               style: TextStyle(color: AppColors.darkPurple),
             ),
             SizedBox(
@@ -65,5 +71,18 @@ class _SelectedBandWidgetState extends State<SelectedBandWidget> {
         ),
       ],
     );
+  }
+
+  getDate(int index) {
+    String date = '';
+    for (int indx = 0; indx < getList()[index].dateModel.length; indx++) {
+      if (getList()[index].dateModel[indx].select) {
+        date =
+            '${getList()[index].dateModel[indx].day} ${getList()[index].dateModel[indx].date},2021';
+        break;
+      }
+    }
+
+    return date;
   }
 }
